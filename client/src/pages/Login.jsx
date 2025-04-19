@@ -20,8 +20,9 @@ const Login = () => {
       if(data.error){
         toast.error(data.error)  
       }else{
+        toast.success('amjilttai login hiilee')
         setData({})
-        navigate("/")
+        navigate("/dashboard")
       }
     }catch(error){
       console.log(error)

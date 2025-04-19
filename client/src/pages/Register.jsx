@@ -3,7 +3,7 @@ import axios from 'axios'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 const Register = () => {
-  const navigate = useNavigate
+  const navigate = useNavigate()
   const [data, setData] = useState({
     name: '',
     email: '',
@@ -17,10 +17,9 @@ const Register = () => {
       if (data.error) {
         toast.error(data.error)
       } else {
-        setData({})
+        setData({ name: '', email: '', password: '' })
         toast.success('Login succussful ')
         navigate('/login')
-        
       }
     } catch (error) {
       console.log(error)

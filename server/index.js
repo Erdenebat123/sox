@@ -3,6 +3,7 @@ const dotenv = require('dotenv').config({ path: './config/config.env' })
 const colors = require('colors')
 const cors = require('cors')
 const { mongoose } = require('mongoose')
+const cookieParser = require("cookie-parser")
 const app = express()
 mongoose
   .connect(process.env.MONGO_URL)
@@ -10,6 +11,8 @@ mongoose
   .catch(err => console.log('Database not connected', err))
 
 app.use(express.json())
+app.use(cookieParser())
+app.use(express.urlencoded({extended: false}))
 
 app.use('/', require('./Routes/authRoutes'))
 
