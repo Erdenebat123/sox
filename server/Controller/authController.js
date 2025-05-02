@@ -1,82 +1,81 @@
 const User = require('../Model/user')
-const { hashPassword, comparePassword } = require('../helpers/auth.js')
-const jwt = require('jsonwebtoken')
 
 const test = (reg, res) => {
   res.json('test is working')
 }
+//register
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body
-    if (!name) {
+    const { name, phone, password, orst, haalga } = req.body
+    if (
+      !name ||
+      !phone ||
+      !password ||
+      password.length < 6 ||
+      !orst ||
+      !haalga
+    ) {
       return res.json({
-        error: 'name is required',
+        error: 'талбараа гүйцэд бөглөнүү',
       })
     }
 
-    if (!password || password.length < 6) {
-      return res.json({
-        error: 'Password bogino',
-      })
-    }
-
-    const exits = await User.findOne({ email })
+    const exits = await User.findOne({ phone })
     if (exits) {
       return res.json({
-        error: 'email burguulsen baina',
+        error: 'dugaar burguulsen baina',
       })
     }
-    const hashedPassword = await hashPassword(password)
+
     const user = await User.create({
       name,
-      email,
-      password: hashedPassword,
+      phone,
+      password,
+      orst,
+      haalga,
     })
-    return res.json(user)
+    const token = user.getJsonWebToken()
+    return res.status(200).json({
+      success: true,
+      token,
+      user: user,
+    })
   } catch (err) {
     console.log(err)
   }
 }
-
+//login
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body
-    const user = await User.findOne({ email })
-    if (!user) {
+    const { phone, password } = req.body
+    if (!phone || !password) {
       return res.json({
-        error: 'no user found',
+        error: 'talbaraa boglunoo',
       })
     }
-    const match = await comparePassword(password, user.password)
-    if (match) {
-      jwt.sign(
-        { email: user.email, id: user._id, name: user.name },
-        process.env.JWT,
-        {},
-        (err, token) => {
-          if (err) throw err
-          res.cookie('token', token).json(user)
-        }
-      )
+    const user = await User.findOne({ phone }).select('+password')
+    if (!user) {
+      return res.json({
+        error: 'hereglegch burtguuleegui baina',
+      })
     }
+    const match = await user.checkPassword(password)
+    if (!match) {
+      return res.json({
+        error: 'password bolon dugaara zuv oruulna uu',
+      })
+    }
+    res.status(200).json({
+      success: true,
+      token: user.getJsonWebToken(),
+      user: user,
+    })
   } catch (error) {
     console.log(error)
-  }
-}
-const getProfile = (req, res) => {
-  const { token } = req.cookies
-  if (token) {
-    jwt.verify(token, process.env.JWT, {}, (err, user)=>{
-      if(err) throw err;
-      res.json(user)
-    })
-  }else{
-    res.json(null )
   }
 }
 module.exports = {
   test,
   registerUser,
   loginUser,
-  getProfile,
 }

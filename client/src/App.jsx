@@ -1,29 +1,21 @@
-import { Routes, Route } from 'react-router-dom'
-import './App.css'
-import Navbar from './components/Navbar'
-import Home from './pages/Home'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import Dashboard from './pages/Dashboard'
-import axios from 'axios'
 import { Toaster } from 'react-hot-toast'
-import { UserContextProvider } from '../context/userContext'
+import Admin from './pages/Admin'
+import User from './pages/User'
 
-axios.defaults.baseURL = 'http://localhost:3000/'
-axios.defaults.withCredentials = true
 function App() {
   return (
     <>
-      <UserContextProvider>
-        <Navbar /> 
-        <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </UserContextProvider>
+      <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
+      <Routes>
+        <Route path="/" element={<Navigate to="/register" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/user" element={<User />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
     </>
   )
 }

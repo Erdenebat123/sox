@@ -5,12 +5,18 @@ const {
   test,
   registerUser,
   loginUser,
-  getProfile
 } = require('../Controller/authController')
+const { protect, admin } = require('../middleware/protect.js')
+const {
+  userData,
+  getUsers,
+  deleteUser,
+  updateUser,
+} = require('../Controller/adminController.js')
 
 router.use(
   cors({
-    credentials: true,
+
     origin: 'http://localhost:5173',
   })
 )
@@ -18,5 +24,8 @@ router.use(
 router.get('/', test)
 router.post('/register', registerUser)
 router.post('/login', loginUser)
-router.get('/profile',getProfile)
+router.get('/userData', protect, userData)
+router.get('/getusers', protect, admin('admin'), getUsers)
+router.delete('/deleteuser/:id', protect, admin('admin'), deleteUser)
+router.put('/updateuser/:id', protect, admin('admin'), updateUser)
 module.exports = router
