@@ -1,8 +1,6 @@
 const User = require('../Model/user')
 
-const test = (reg, res) => {
-  res.json('test is working')
-}
+
 //register
 const registerUser = async (req, res) => {
   try {
@@ -34,10 +32,10 @@ const registerUser = async (req, res) => {
       orst,
       haalga,
     })
-    const token = user.getJsonWebToken()
+
     return res.status(200).json({
       success: true,
-      token,
+      token: user.getJsonWebToken(),
       user: user,
     })
   } catch (err) {
@@ -75,7 +73,6 @@ const loginUser = async (req, res) => {
   }
 }
 module.exports = {
-  test,
   registerUser,
   loginUser,
 }
